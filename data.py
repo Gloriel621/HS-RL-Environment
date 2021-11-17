@@ -169,7 +169,7 @@ Buyers = [
     windspeaker,
     defender_of_argus,
 ]
-Buyers_gold = [
+Gold_Amount = [
     [10, 18, 60, 138, 205],
     [18, 25, 120, 92, 240],
     [13, 14, 30, 150, 166],

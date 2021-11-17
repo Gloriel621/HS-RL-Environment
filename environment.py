@@ -11,7 +11,7 @@ class Environment:
         self.init_buyers = Buyers
         self.gold_amount = Gold_Amount
 
-        self.state_class = copy.deepcopy(self.init_state)
+        self.state = copy.deepcopy(self.init_state)
         self.sellers = copy.deepcopy(self.init_sellers)
         self.buyers = copy.deepcopy(self.init_buyers)
 
@@ -20,7 +20,7 @@ class Environment:
         self.num_steps = 0
         self.reward = 0
 
-        self.state_class = copy.deepcopy(self.init_state)
+        self.state = copy.deepcopy(self.init_state)
         self.sellers = copy.deepcopy(self.init_sellers)
         self.buyers = copy.deepcopy(self.init_buyers)
 
@@ -37,6 +37,7 @@ class Environment:
                 num_second = self.state.hand[first] // amount
                 self.state.hand[second] += num_second
                 self.state.hand[first] -= num_second * amount
+                break
 
     # action 7 ~ 13
     def Buy(self, action: int):
@@ -51,17 +52,16 @@ class Environment:
                 self.state.hand["gold"] += gold[count]
                 self.state.hand[goods] -= buyer[goods]
                 self.state.buyers[action][goods] = 0
+                break
             count += 1
 
-    def Trade(self, action: int, state: State):
+    def Trade(self, action: int):
 
         if action >= 7:
-            state = self.Buy(action, state)
+            self.Buy(action)
 
         else:
-            state = self.Sell(action, state)
-
-        return state
+            self.Sell(action)
 
     def step(self, action: int):
 
@@ -72,7 +72,7 @@ class Environment:
         if self.num_steps == 1000:
             self.done = True
 
-        return self.state_class, self.reward, self.done
+        return self.state, self.reward, self.done
 
     def cal_reward(self):
 

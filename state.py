@@ -1,5 +1,6 @@
-import numpy as np
 from data import Hand, Buyers
+
+import numpy as np
 
 
 class State:

@@ -66,6 +66,56 @@ Drakkari_Enchanter = [
     ("cute_doll", "alliance_mace", 3),
 ]
 
+dalaran_mage = {
+    "hand_axe": 6,
+    "goblin_fishing_pole": 2,
+    "angry_cristal": 1,
+    "arcane_scroll": 6,
+    "sphere_of_wisdom": 3,
+}
+bloodsail_corsair = {
+    "cute_doll": 6,
+    "stormwind_cheddar": 10,
+    "goblin_fishing_pole": 10,
+    "ruby_crown": 4,
+    "potions_of_night": 8,
+}
+violet_apprentice = {
+    "linen_bandage": 3,
+    "very_nice_hat": 4,
+    "draught_of_angels": 1,
+    "angty_cristal": 3,
+    "cute_doll": 9,
+}
+silver_hand_knight = {
+    "jade_locket": 1,
+    "captivating_pipe": 6,
+    "ruby_crown": 2,
+    "tiger_amulet": 2,
+    "sapphire_wand": 10,
+}
+darnassus_aspirant = {
+    "iton_dagger": 3,
+    "gilneas_dagger": 1,
+    "captivating_pipe": 4,
+    "alliance_mace": 5,
+    "shadowy_gem": 7,
+}
+windspeaker = {
+    "elixir_of_vigor": 10,
+    "gnomish_shield": 2,
+    "golden_goblet": 7,
+    "alliance_mace": 4,
+    "everburning_candle": 7,
+}
+defender_of_argus = {
+    "healing_potion": 8,
+    "loyal_pet_whistle": 3,
+    "arcane_scroll": 2,
+    "gnomish_shield": 7,
+    "draught_of_angels": 4,
+}
+
 Merchants = [
     Baloon_Merchant,
     Armor_Vender,
@@ -74,4 +124,14 @@ Merchants = [
     Shady_dealer,
     Master_Swordsmith,
     Drakkari_Enchanter,
+]
+
+Buyers = [
+    dalaran_mage,
+    bloodsail_corsair,
+    violet_apprentice,
+    silver_hand_knight,
+    darnassus_aspirant,
+    windspeaker,
+    defender_of_argus
 ]

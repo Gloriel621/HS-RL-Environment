@@ -1,5 +1,5 @@
 from state import State
-from data import Sellers, Buyers, Gold_Amount
+from data import Sellers, Gold_Amount
 import copy
 
 
@@ -8,12 +8,10 @@ class Environment:
         self.num_actions = 14
         self.init_state = State()
         self.init_sellers = Sellers
-        self.init_buyers = Buyers
         self.gold_amount = Gold_Amount
 
         self.state = copy.deepcopy(self.init_state)
         self.sellers = copy.deepcopy(self.init_sellers)
-        self.buyers = copy.deepcopy(self.init_buyers)
 
     def reset(self):
         self.done = False
@@ -22,8 +20,8 @@ class Environment:
 
         self.state = copy.deepcopy(self.init_state)
         self.sellers = copy.deepcopy(self.init_sellers)
-        self.buyers = copy.deepcopy(self.init_buyers)
 
+    # actions 0 ~ 6
     def Sell(self, action: int):
 
         goods_list = Sellers[action]
@@ -39,7 +37,7 @@ class Environment:
                 self.state.hand[first] -= num_second * amount
                 break
 
-    # action 7 ~ 13
+    # actions 7 ~ 13
     def Buy(self, action: int):
 
         action = action - 7
@@ -65,10 +63,8 @@ class Environment:
 
     def step(self, action: int):
 
-        # Buyers 들 검사해서 다 샀으면 보상 추가
         self.reward += 0
 
-        # done = True 만드는 조건? 일단 모든 buyer들이 다 샀으면 끝내는 거로 하고 싶긴 함
         if self.num_steps == 1000:
             self.done = True
 

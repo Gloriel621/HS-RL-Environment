@@ -15,10 +15,11 @@ class State:
         np_buyers = []
         for buyer in self.buyers:
             np_buyers.append(np.fromiter(buyer.values(), dtype=int))
-        
+
         self.state = np_hand
         for np_buyer in np_buyers:
             self.state = np.concatenate([self.state, np_buyer], dtype=int)
+
 
 # action 0 ~ 6
 def Sell(action: int, state: State):  # 나중에 클래스 안에 넣고 state 사용하는 거로 바꾸기.
@@ -38,9 +39,9 @@ def Sell(action: int, state: State):  # 나중에 클래스 안에 넣고 state 
 
     return state
 
+
 # action 7 ~ 13
 def Buy(action: int, state: State):
-
 
     action = action - 7
     buyer = state.buyers[action]
@@ -49,8 +50,8 @@ def Buy(action: int, state: State):
     count = 0
     for goods in buyer:
         if buyer[goods] > 0 and state.hand[goods] >= buyer[goods]:
-        # 사람이 필요로 하는 물건의 개수가 0보다 크고
-        # 현재 손패에 들고 있는 물건의 개수가 필요로 하는 물건 개수 이상일 때
+            # 사람이 필요로 하는 물건의 개수가 0보다 크고
+            # 현재 손패에 들고 있는 물건의 개수가 필요로 하는 물건 개수 이상일 때
             state.hand["gold"] += gold[count]
             state.hand[goods] -= buyer[goods]
             state.buyers[action][goods] = 0
@@ -59,12 +60,13 @@ def Buy(action: int, state: State):
 
     return state
 
-def Trade(action: int, state:State):
 
-    if action >= 7 :
+def Trade(action: int, state: State):
+
+    if action >= 7:
         state = Buy(action, state)
-    
+
     else:
         state = Sell(action, state)
-    
+
     return state

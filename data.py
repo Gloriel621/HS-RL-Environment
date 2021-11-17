@@ -67,7 +67,6 @@ Darkshire_Alchemist = [
     ("healing_potion", "gilneas_dagger", 49),
     ("stormwind_cheddar", "potions_of_night", 13),
     ("arcane_scroll", "tiger_amulet", 3),
-    
 ]
 
 Shady_dealer = [

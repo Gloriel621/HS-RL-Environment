@@ -27,7 +27,12 @@ env = Environment()
 for action in action_list:
     env.Trade(action)
 
+    done = 0
+
     for goods in env.state.hand:
         if env.state.hand[goods] != 0:
-            print(goods, env.state.hand[goods], end=" ")
-    print("")
+            print(f"{goods}: {env.state.hand[goods]}")
+        for buyer in env.state.buyers:
+            if goods in buyer and buyer[goods] == 0:
+                done += 1
+    print(f"\nnum_done : {done}")

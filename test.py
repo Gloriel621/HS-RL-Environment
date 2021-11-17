@@ -1,5 +1,6 @@
 # https://www.hearthpwn.com/news/8230-mysteries-of-the-phoenix-druid-and-hunter-puzzles
-from environment import State, Trade
+from state import State
+
 
 # Baloon_Merchant 0
 # Armor_Vender 1

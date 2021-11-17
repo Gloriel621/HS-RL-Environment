@@ -1,6 +1,5 @@
 # https://www.hearthpwn.com/news/8230-mysteries-of-the-phoenix-druid-and-hunter-puzzles
-from state import State
-
+from environment import Environment
 
 # Baloon_Merchant 0
 # Armor_Vender 1
@@ -24,11 +23,11 @@ action_list = [5, 1, 3, 0, 10, 5, 1, 3, 9, 5, 3, 2, 8, 11, 1, 6, 13, 1, 3, 12, 6
                4, 7, 5, 6, 11, 5, 0, 4, 9, 4, 7, 1, 6, 1, 10, 3, 5, 8, 0, 1, 3, 12, 3, 10, 5, 3, 2, 0,
                9, 5, 12, 2, 7, 2, 4, 9, 0, 13]
 
-state = State()
+env = Environment()
 for action in action_list:
-    state = Trade(action, state)
+    env.Trade(action)
 
-    for goods in state.hand:
-        if state.hand[goods] != 0:
-            print(goods, state.hand[goods], end=" ")
+    for goods in env.state.hand:
+        if env.state.hand[goods] != 0:
+            print(goods, env.state.hand[goods], end=" ")
     print("")

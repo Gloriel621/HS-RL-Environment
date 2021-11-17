@@ -1,72 +1,83 @@
-import numpy as np
-from data import Hand, Sellers, Buyers, Buyers_gold
+from state import State
+from data import Sellers, Buyers, Gold_Amount
+import copy
 
 
-class State:
+class Environment:
     def __init__(self):
-        self.hand = Hand
-        self.buyers = Buyers
+        self.num_actions = 14
+        self.init_state = State()
+        self.init_sellers = Sellers
+        self.init_buyers = Buyers
+        self.gold_amount = Gold_Amount
 
-        self.state_to_numpy()
+        self.state_class = copy.deepcopy(self.init_state)
+        self.sellers = copy.deepcopy(self.init_sellers)
+        self.buyers = copy.deepcopy(self.init_buyers)
 
-    def state_to_numpy(self):  # change to model input form
-        np_hand = np.fromiter(self.hand.values(), dtype=int)
+    def reset(self):
+        self.done = False
+        self.num_steps = 0
+        self.reward = 0
 
-        np_buyers = []
-        for buyer in self.buyers:
-            np_buyers.append(np.fromiter(buyer.values(), dtype=int))
+        self.state_class = copy.deepcopy(self.init_state)
+        self.sellers = copy.deepcopy(self.init_sellers)
+        self.buyers = copy.deepcopy(self.init_buyers)
 
-        self.state = np_hand
-        for np_buyer in np_buyers:
-            self.state = np.concatenate([self.state, np_buyer], dtype=int)
+    def Sell(self, action: int):
 
+        goods_list = Sellers[action]
 
-# action 0 ~ 6
-def Sell(action: int, state: State):  # 나중에 클래스 안에 넣고 state 사용하는 거로 바꾸기.
+        for goods in goods_list:
+            first = goods[0]
+            second = goods[1]
+            amount = goods[2]
 
-    goods_list = Sellers[action]
+            if self.state.hand[first] >= amount:
+                num_second = self.state.hand[first] // amount
+                self.state.hand[second] += num_second
+                self.state.hand[first] -= num_second * amount
 
-    for goods in goods_list:
-        first = goods[0]
-        second = goods[1]
-        amount = goods[2]
+    # action 7 ~ 13
+    def Buy(self, action: int):
 
-        if state.hand[first] >= amount:
-            num_second = state.hand[first] // amount
-            state.hand[second] += num_second
-            state.hand[first] -= num_second * amount
-            return state
+        action = action - 7
+        buyer = self.state.buyers[action]
+        gold = self.gold_amount[action]
 
-    return state
+        count = 0
+        for goods in buyer:
+            if buyer[goods] > 0 and self.state.hand[goods] >= buyer[goods]:
+                self.state.hand["gold"] += gold[count]
+                self.state.hand[goods] -= buyer[goods]
+                self.state.buyers[action][goods] = 0
+            count += 1
 
+    def Trade(self, action: int, state: State):
 
-# action 7 ~ 13
-def Buy(action: int, state: State):
+        if action >= 7:
+            state = self.Buy(action, state)
 
-    action = action - 7
-    buyer = state.buyers[action]
-    gold = Buyers_gold[action]
+        else:
+            state = self.Sell(action, state)
 
-    count = 0
-    for goods in buyer:
-        if buyer[goods] > 0 and state.hand[goods] >= buyer[goods]:
-            # 사람이 필요로 하는 물건의 개수가 0보다 크고
-            # 현재 손패에 들고 있는 물건의 개수가 필요로 하는 물건 개수 이상일 때
-            state.hand["gold"] += gold[count]
-            state.hand[goods] -= buyer[goods]
-            state.buyers[action][goods] = 0
-            return state
-        count += 1
+        return state
 
-    return state
+    def step(self, action: int):
 
+        # Buyers 들 검사해서 다 샀으면 보상 추가
+        self.reward += 0
 
-def Trade(action: int, state: State):
+        # done = True 만드는 조건? 일단 모든 buyer들이 다 샀으면 끝내는 거로 하고 싶긴 함
+        if self.num_steps == 1000:
+            self.done = True
 
-    if action >= 7:
-        state = Buy(action, state)
+        return self.state_class, self.reward, self.done
 
-    else:
-        state = Sell(action, state)
+    def cal_reward(self):
 
-    return state
+        return
+
+    def render(self):
+
+        return

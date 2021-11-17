@@ -1,41 +1,12 @@
 import numpy as np
-from data import Merchants, Buyers
+from data import Hand, Sellers, Buyers, Buyers_gold
 
 
 class State:
     def __init__(self):
-        self.hand = {
-            "gold": 10,
-            "hand_axe": 0,  # 손도끼
-            "linen_bandage": 0,  # 리넨 붕대
-            "stormwind_cheddar": 0,  # 스톰윈드 체더 치즈
-            "cute_doll": 0,  # 귀여운 인형
-            "shadowy_gem": 0,  # 그림자 보석
-            "elixir_of_vigor": 0,  # 재활의 물약
-            "potions_of_night": 0,  # 밤의 물약
-            "gnomish_shield": 0,  # 노움 방패
-            "loyal_pet_whistle": 0,  # 충직의 애완동물 호루라기
-            "very_nice_hat": 0,  # 아주 멋진 모자
-            "angry_cristal": 0,  # 화난 수정
-            "jade_locket": 0,  # 비취 은감 목걸이
-            "goblin_fishing_pole": 0,  # 고블린 낚시 도구
-            "captivating_pipe": 0,  # 매료의 피리
-            "healing_potion": 0,  # 치유 물약
-            "iron_dagger": 0,  # , 강철 단검
-            "arcane_scroll": 0,  # 비전 두루마리
-            "golden_goblet": 0,  # 황금 술잔
-            "sapphire_wand": 0,  # 사파이어 마법봉
-            "everburning_candle": 0,  # 영원히 타오르는 양초
-            "ruby_crown": 0,  # 루비 왕관
-            "alliance_mace": 0,  # 얼라이언스 철퇴
-            "draught_of_angels": 0,  # 천사의 비약
-            "gilneas_dagger": 0,  # 길니아스 단검
-            "tiger_amulet": 0,  # 호랑이 부적
-            "sphere_of_wisdom": 0,  # 지혜의 구슬
-        }
+        self.hand = Hand
         self.buyers = Buyers
 
-        
         self.state_to_numpy()
 
     def state_to_numpy(self):  # change to model input form
@@ -49,22 +20,51 @@ class State:
         for np_buyer in np_buyers:
             self.state = np.concatenate([self.state, np_buyer], dtype=int)
 
-def Sell(action: int, hand: State.hand):  # 나중에 클래스 안에 넣고 state사용하는 거로 바꾸기.
+# action 0 ~ 6
+def Sell(action: int, state: State):  # 나중에 클래스 안에 넣고 state 사용하는 거로 바꾸기.
 
-    goods_list = Merchants[action]
+    goods_list = Sellers[action]
 
     for goods in goods_list:
         first = goods[0]
         second = goods[1]
         amount = goods[2]
 
-        if hand[first] >= amount:
-            num_second = hand[first] // amount
-            hand[second] = num_second
-            hand[first] = hand[first] - num_second * amount
-            return hand
+        if state.hand[first] >= amount:
+            num_second = state.hand[first] // amount
+            state.hand[second] += num_second
+            state.hand[first] -= num_second * amount
+            return state
 
-    return hand
+    return state
 
+# action 7 ~ 13
 def Buy(action: int, state: State):
-    pass
+
+
+    action = action - 7
+    buyer = state.buyers[action]
+    gold = Buyers_gold[action]
+
+    count = 0
+    for goods in buyer:
+        if buyer[goods] > 0 and state.hand[goods] >= buyer[goods]:
+        # 사람이 필요로 하는 물건의 개수가 0보다 크고
+        # 현재 손패에 들고 있는 물건의 개수가 필요로 하는 물건 개수 이상일 때
+            state.hand["gold"] += gold[count]
+            state.hand[goods] -= buyer[goods]
+            state.buyers[action][goods] = 0
+            return state
+        count += 1
+
+    return state
+
+def Trade(action: int, state:State):
+
+    if action >= 7 :
+        state = Buy(action, state)
+    
+    else:
+        state = Sell(action, state)
+    
+    return state

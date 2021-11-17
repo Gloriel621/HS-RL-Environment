@@ -1,10 +1,10 @@
 import numpy as np
-from data import Merchants
+from data import Merchants, Buyers
 
 
 class State:
     def __init__(self):
-        self.state_dict = {
+        self.hand = {
             "gold": 10,
             "hand_axe": 0,  # 손도끼
             "linen_bandage": 0,  # 리넨 붕대
@@ -33,29 +33,38 @@ class State:
             "tiger_amulet": 0,  # 호랑이 부적
             "sphere_of_wisdom": 0,  # 지혜의 구슬
         }
+        self.buyers = Buyers
+
+        
         self.state_to_numpy()
 
     def state_to_numpy(self):  # change to model input form
-        self.numpy_state = np.fromiter(self.state_dict.values(), dtype=int)
+        np_hand = np.fromiter(self.hand.values(), dtype=int)
 
+        np_buyers = []
+        for buyer in self.buyers:
+            np_buyers.append(np.fromiter(buyer.values(), dtype=int))
+        
+        self.state = np_hand
+        for np_buyer in np_buyers:
+            self.state = np.concatenate([self.state, np_buyer], dtype=int)
 
-def sell(state: State, goods_list):  # 나중에 클래스 안에 넣고 state사용하는 거로 바꾸기.
+def Sell(action: int, hand: State.hand):  # 나중에 클래스 안에 넣고 state사용하는 거로 바꾸기.
+
+    goods_list = Merchants[action]
 
     for goods in goods_list:
         first = goods[0]
         second = goods[1]
         amount = goods[2]
 
-    if state[first] >= amount:
-        num_second = state[first] // amount
-        state[second] = num_second
-        state[first] = state[first] - num_second * amount
-        return state
+        if hand[first] >= amount:
+            num_second = hand[first] // amount
+            hand[second] = num_second
+            hand[first] = hand[first] - num_second * amount
+            return hand
 
-    return state
+    return hand
 
-
-def Sellers(action: int, state: State):
-
-    goods_list = Merchants[action]
-    state = sell(state, goods_list)
+def Buy(action: int, state: State):
+    pass

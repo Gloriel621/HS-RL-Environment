@@ -10,9 +10,10 @@ class PPO(nn.Module):
         self.init_hyperparameters()
 
         self.data = []
+        self.num_inputs = 62
         self.num_actions = 14
 
-        self.fc1 = nn.Linear(self.num_actions, 512)
+        self.fc1 = nn.Linear(self.num_inputs, 512)
         self.fc2 = nn.Linear(512, 256)
         self.fc_pi = nn.Linear(256, self.num_actions)
         self.fc_v = nn.Linear(256, 1)
@@ -20,7 +21,7 @@ class PPO(nn.Module):
 
     def pi(self, x, softmax_dim=1):
 
-        x = x.reshape(-1, self.num_actions)
+        x = x.reshape(-1, self.num_inputs)
         x = F.elu(self.fc1(x))
         x = F.elu(self.fc2(x))
         x = self.fc_pi(x)
@@ -28,7 +29,7 @@ class PPO(nn.Module):
         return prob
 
     def v(self, x):
-        x = x.reshape(-1, self.num_actions)
+        x = x.reshape(-1, self.num_inputs)
         x = F.elu(self.fc1(x))
         x = F.elu(self.fc2(x))
         v = self.fc_v(x)
@@ -83,7 +84,7 @@ class PPO(nn.Module):
             advantage_list = []
             advantage = 0.0
             for delta_t in delta[::-1]:
-                advantage = self.gamma * self.lmbda * self.v(state_prime) * done_mask
+                advantage = self.gamma * self.lmbda * advantage + delta_t[0]
                 advantage_list.append([advantage])
             advantage_list.reverse()
             advantage = torch.tensor(advantage_list, dtype=torch.float)

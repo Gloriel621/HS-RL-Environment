@@ -24,15 +24,14 @@ action_list = [5, 1, 3, 0, 10, 5, 1, 3, 9, 5, 3, 2, 8, 11, 1, 6, 13, 1, 3, 12, 6
                9, 5, 12, 2, 7, 2, 4, 9, 0, 13]
 
 env = Environment()
+env.reset()
 for action in action_list:
-    env.Trade(action)
+    env.step(action)
 
     done = 0
 
     for goods in env.state.hand:
         if env.state.hand[goods] != 0:
             print(f"{goods}: {env.state.hand[goods]}")
-        for buyer in env.state.buyers:
-            if goods in buyer and buyer[goods] == 0:
-                done += 1
-    print(f"\nnum_done : {done}")
+
+    print(f"num_done : {env.reward}\n")

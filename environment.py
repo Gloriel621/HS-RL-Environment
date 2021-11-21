@@ -41,6 +41,7 @@ class Environment:
     # actions 7 ~ 13
     def Buy(self, action: int):
 
+        num_done = 0
         action = action - 7
         buyer = self.state.buyers[action]
         gold = self.gold_amount[action]
@@ -51,29 +52,26 @@ class Environment:
                 self.state.hand["gold"] += gold[count]
                 self.state.hand[goods] -= buyer[goods]
                 self.state.buyers[action][goods] = 0
+                num_done += 1
                 break
             count += 1
 
-    def Trade(self, action: int):
+        return num_done
+
+    def step(self, action: int):
 
         if action >= 7:
-            self.Buy(action)
+            self.reward += self.Buy(action)
 
         else:
             self.Sell(action)
 
-    def step(self, action: int):
+        self.num_steps += 1
 
-        self.reward += 0
-
-        if self.num_steps == 1000:
+        if self.reward == 35 or self.num_steps >= 500:
             self.done = True
 
         return self.state, self.reward, self.done
-
-    def cal_reward(self):
-
-        return
 
     def render(self):
 

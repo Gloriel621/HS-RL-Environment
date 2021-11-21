@@ -17,6 +17,8 @@ class State:
         for buyer in self.buyers:
             np_buyers.append(np.fromiter(buyer.values(), dtype=int))
 
-        self.state = np_hand
+        state = np_hand
         for np_buyer in np_buyers:
-            self.state = np.concatenate([self.state, np_buyer], dtype=int)
+            state = np.concatenate([state, np_buyer], dtype=int)
+
+        return state

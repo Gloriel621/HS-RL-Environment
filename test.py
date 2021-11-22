@@ -17,23 +17,25 @@ from environment import Environment
 # windspeaker 12
 # defender_of_argus 13
 
-# action_list = [5, 1, 3, 0, 10, 5, 1, 3, 9, 5, 3, 2, 8, 11, 1, 6, 13, 1, 3, 12, 6, 8, 1, 6, 1, 4, 11,
-#                4, 3, 2, 1, 13, 3, 11, 3, 5, 5, 1, 10, 2, 5, 7, 2, 5, 8, 1, 3, 13, 1, 3, 6, 10, 0, 1,
-#                12, 5, 0, 4, 7, 0, 1, 3, 11, 5, 3, 2, 9, 0, 1, 3, 5, 12, 5, 3, 2, 0, 13, 6, 3, 8, 0, 1,
-#                4, 7, 5, 6, 11, 5, 0, 4, 9, 4, 7, 1, 6, 1, 10, 3, 5, 8, 0, 1, 3, 12, 3, 10, 5, 3, 2, 0,
-#                9, 5, 12, 2, 7, 2, 4, 9, 0, 13]
+action_list = [5, 1, 3, 0, 10, 5, 1, 3, 9, 5, 3, 2, 8, 11, 1, 6, 13, 1, 3, 12, 6, 8, 1, 6, 1, 4, 11,
+               4, 3, 2, 1, 13, 3, 11, 3, 5, 5, 1, 10, 2, 5, 7, 2, 5, 8, 1, 3, 13, 1, 3, 6, 10, 0, 1,
+               12, 5, 0, 4, 7, 0, 1, 3, 11, 5, 3, 2, 9, 0, 1, 3, 5, 12, 5, 3, 2, 0, 13, 6, 3, 8, 0, 1,
+               4, 7, 5, 6, 11, 5, 0, 4, 9, 4, 7, 1, 6, 1, 10, 3, 5, 8, 0, 1, 3, 12, 3, 10, 5, 3, 2, 0,
+               9, 5, 12, 2, 7, 2, 4, 9, 0, 13]
 
-action_list = [9, 9, 0, 4, 5, 10, 9, 3, 1, 7, 9, 2, 13, 9, 9, 9, 10, 5, 9, 9, 9, 9, 9, 10, 1, 9, 9, 11, 9, 5, 9]
+# action_list = [9, 9, 0, 4, 5, 10, 9, 3, 1, 7, 9, 2, 13, 9, 9, 9, 10, 5, 9, 9, 9, 9, 9, 10, 1, 9, 9, 11, 9, 5, 9]
 
 env = Environment()
 env.reset()
 for action in action_list:
-    env.step(action)
+    state, reward, done = env.step(action)
 
     done = 0
 
-    for goods in env.state.hand:
-        if env.state.hand[goods] != 0:
-            print(f"{goods}: {env.state.hand[goods]}")
+    # for goods in env.state.hand:
+    #     if env.state.hand[goods] != 0:
+    #         print(f"{goods}: {env.state.hand[goods]}")
 
-    print(f"num_done : {env.reward}\n")
+    print(f"reward : {env.reward}")
+    print(f"num_done : {env.num_done}")
+    print(f"step : {env.num_steps}\n")

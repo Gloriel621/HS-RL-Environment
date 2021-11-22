@@ -2,6 +2,7 @@ from state import State
 from data import Sellers, Gold_Amount
 
 import copy
+import numpy as np
 
 
 class Environment:
@@ -11,16 +12,14 @@ class Environment:
         self.init_sellers = Sellers
         self.gold_amount = Gold_Amount
 
-        self.state = copy.deepcopy(self.init_state)
-        self.sellers = copy.deepcopy(self.init_sellers)
-
     def reset(self):
         self.done = False
         self.num_steps = 0
         self.reward = 0
+        self.num_done = 0
 
         self.state = copy.deepcopy(self.init_state)
-        self.sellers = copy.deepcopy(self.init_sellers)
+        self.infeasible = np.zeros(self.num_actions)
 
     # actions 0 ~ 6
     def Sell(self, action: int):
@@ -41,7 +40,6 @@ class Environment:
     # actions 7 ~ 13
     def Buy(self, action: int):
 
-        num_done = 0
         action = action - 7
         buyer = self.state.buyers[action]
         gold = self.gold_amount[action]
@@ -52,27 +50,33 @@ class Environment:
                 self.state.hand["gold"] += gold[count]
                 self.state.hand[goods] -= buyer[goods]
                 self.state.buyers[action][goods] = 0
-                num_done += 1
+                self.reward += 10
+                self.num_done += 1
                 break
             count += 1
 
-        return num_done
-
     def step(self, action: int):
 
+        prev_state = copy.deepcopy(self.state)
+
         if action >= 7:
-            buy = self.Buy(action)
-            if buy == 0:
-                self.reward -= 0.1
-            else:
-                self.reward += 1
+            self.Buy(action)
 
         else:
             self.Sell(action)
 
-        self.num_steps += 1
+        if (prev_state.hand == self.state.hand
+                and prev_state.buyers == self.state.buyers):
+            self.infeasible[action] = 1
 
-        if self.reward == 35 or self.num_steps >= 500:
+        else:
+            self.infeasible = np.zeros(self.num_actions)
+            self.num_steps += 1
+
+        if np.all(self.infeasible) == 1:
+            self.done = True
+
+        if self.num_done >= 35 or self.num_steps >= 250:
             self.done = True
 
         return self.state, self.reward, self.done

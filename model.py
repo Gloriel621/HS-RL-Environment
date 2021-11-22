@@ -107,5 +107,5 @@ class PPO(nn.Module):
         self.gamma = 0.98
         self.lmbda = 0.98
         self.K_epoch = 1
-        self.eps_clip = 0.1
-        self.learning_rate = 0.001
+        self.eps_clip = 0.15
+        self.learning_rate = 0.0008

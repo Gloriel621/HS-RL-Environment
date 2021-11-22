@@ -61,7 +61,11 @@ class Environment:
     def step(self, action: int):
 
         if action >= 7:
-            self.reward += self.Buy(action)
+            buy = self.Buy(action)
+            if buy == 0:
+                self.reward -= 0.1
+            else:
+                self.reward += 1
 
         else:
             self.Sell(action)

@@ -38,8 +38,11 @@ class Trainer:
 
                     action = categorical_distribution.sample().item()
                     new_state, reward, done = self.env.step(action)
-                    print(action, reward)
                     new_state = new_state.state_to_numpy()
+                    print(action, reward)
+                    for goods in self.env.state.hand:
+                        if self.env.state.hand[goods] != 0:
+                            print(f"{goods}: {self.env.state.hand[goods]}")
                     self.model.put_data(
                         (
                             copy.deepcopy(state),

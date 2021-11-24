@@ -36,6 +36,4 @@ for action in action_list:
     #     if env.state.hand[goods] != 0:
     #         print(f"{goods}: {env.state.hand[goods]}")
 
-    print(f"reward : {env.reward}")
-    print(f"num_done : {env.num_done}")
-    print(f"step : {env.num_steps}\n")
+    print(f"num_done : {env.num_solved}, step : {env.num_steps}\n")

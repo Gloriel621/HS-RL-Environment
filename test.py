@@ -23,15 +23,17 @@ action_list = [5, 1, 3, 0, 10, 5, 1, 3, 9, 5, 3, 2, 8, 11, 1, 6, 13, 1, 3, 12, 6
                4, 7, 5, 6, 11, 5, 0, 4, 9, 4, 7, 1, 6, 1, 10, 3, 5, 8, 0, 1, 3, 12, 3, 10, 5, 3, 2, 0,
                9, 5, 12, 2, 7, 2, 4, 9, 0, 13]
 
+# action_list = [9, 9, 0, 4, 5, 10, 9, 3, 1, 7, 9, 2, 13, 9, 9, 9, 10, 5, 9, 9, 9, 9, 9, 10, 1, 9, 9, 11, 9, 5, 9]
+
 env = Environment()
 env.reset()
 for action in action_list:
-    env.step(action)
+    state, reward, done = env.step(action)
 
     done = 0
 
-    for goods in env.state.hand:
-        if env.state.hand[goods] != 0:
-            print(f"{goods}: {env.state.hand[goods]}")
+    # for goods in env.state.hand:
+    #     if env.state.hand[goods] != 0:
+    #         print(f"{goods}: {env.state.hand[goods]}")
 
-    print(f"num_done : {env.reward}\n")
+    print(f"num_done : {env.num_solved}, step : {env.num_steps}\n")

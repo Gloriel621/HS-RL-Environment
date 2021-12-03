@@ -26,41 +26,6 @@ class Trainer:
         self.env.reset()
         self.model = PPO()
 
-    def pre_train(self):
-        rewards = []
-        episode = 0
-        while episode <= 500:
-            self.env.reset()
-            state = copy.deepcopy(self.env.state)
-            state = state.state_to_numpy()
-            done = self.env.done
-
-            for action in action_list:
-                new_state, reward, done = self.env.step(action)
-                new_state = new_state.state_to_numpy()
-                self.model.put_data(
-                    (
-                        copy.deepcopy(state),
-                        action,
-                        float(reward / 64),
-                        copy.deepcopy(new_state),
-                        1,
-                        done,
-                    )
-                )
-                state = copy.deepcopy(new_state)
-                if done:
-                    rewards.append(reward)
-                    break
-
-                if action_list.index(action) % self.mini_batch_size == 0:
-                    self.model.train_net()
-            episode += 1
-
-            if episode % PRINT_INTERVAL == 0 and episode != 0:
-                print("Episode :{}, avg reward : {:.2f}".format(episode, np.mean(rewards)))
-                rewards = []
-
     def train(self):
         rewards = []
         episode = 0

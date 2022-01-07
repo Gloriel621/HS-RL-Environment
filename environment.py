@@ -1,4 +1,3 @@
-from typing import OrderedDict
 from state import State
 from data import Sellers, Gold_Amount
 
@@ -34,7 +33,7 @@ class Environment:
             if goods_str == exchange_list[0]:
                 amount = exchange_list[2]
                 target = exchange_list[1]
-                
+
                 num_second = self.state.hand[goods_str] // amount
                 self.state.hand[target] += num_second
                 self.state.hand[goods_str] -= num_second * amount
@@ -65,7 +64,7 @@ class Environment:
 
         available_action_list = []
 
-        for action in range(7): # sellers
+        for action in range(7):  # sellers
             goods_list = Sellers[action]
 
             for goods in goods_list:
@@ -78,16 +77,15 @@ class Environment:
 
         goods_str = list(self.state.hand.items())[goods_int][0]
 
-        for action in range(7): # buyers
+        for action in range(7):  # buyers
             buyer = self.state.buyers[action]
             buyer_goods_list = list(buyer.keys())
 
             if (goods_str in buyer_goods_list) and buyer[goods_str] > 0 \
-                and self.state.hand[goods_str] >= buyer[goods_str]:
+                    and self.state.hand[goods_str] >= buyer[goods_str]:
                 available_action_list.append(action + 7)
 
         return available_action_list
-
 
     def step(self, goods: int, action: int):
 

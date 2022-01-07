@@ -1,7 +1,5 @@
 from environment import Environment
 
-import numpy as np
-
 goods_action_list = [(0, 5), (0, 1), (6, 3), (2, 0), (12, 10), (0, 5), (0, 1), (6, 3), (2, 9)]
 
 env = Environment()

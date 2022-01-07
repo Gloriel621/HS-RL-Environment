@@ -1,5 +1,5 @@
 Hand = {
-    "gold": 10, # 0
+    "gold": 10,  # 0
     "hand_axe": 0,  # 손도끼, 1
     "linen_bandage": 0,  # 리넨 붕대, 2
     "stormwind_cheddar": 0,  # 스톰윈드 체더 치즈, 3

@@ -11,14 +11,24 @@ class State:
         self.state_to_numpy()
 
     def state_to_numpy(self):  # change to model input form
-        np_hand = np.fromiter(self.hand.values(), dtype=int)
-
-        np_buyers = []
-        for buyer in self.buyers:
-            np_buyers.append(np.fromiter(buyer.values(), dtype=int))
-
-        state = np_hand
-        for np_buyer in np_buyers:
-            state = np.concatenate([state, np_buyer], dtype=int)
+        np_hand = self.hand_to_numpy()
+        np_buyers = self.buyers_to_numpy()
+        state = np.concatenate([np_hand, np_buyers])
 
         return state
+
+    def hand_to_numpy(self):
+        np_hand = np.fromiter(self.hand.values(), dtype=int)
+
+        return np_hand
+
+    def buyers_to_numpy(self):
+        tmp = []
+        for buyer in self.buyers:
+            tmp.append(np.fromiter(buyer.values(), dtype=int))
+
+        np_buyers = []
+        for np_buyer in tmp:
+            np_buyers = np.concatenate([np_buyers, np_buyer])
+
+        return np_buyers

@@ -9,14 +9,8 @@ from torch.distributions import Categorical
 from model import PPO
 from environment import Environment
 
-PRINT_INTERVAL = 50
+PRINT_INTERVAL = 200
 logger = structlog.get_logger(__name__)
-
-action_list = [5, 1, 3, 0, 10, 5, 1, 3, 9, 5, 3, 2, 8, 11, 1, 6, 13, 1, 3, 12, 6, 8, 1, 6, 1, 4, 11,
-               4, 3, 2, 1, 13, 3, 11, 3, 5, 5, 1, 10, 2, 5, 7, 2, 5, 8, 1, 3, 13, 1, 3, 6, 10, 0, 1,
-               12, 5, 0, 4, 7, 0, 1, 3, 11, 5, 3, 2, 9, 0, 1, 3, 5, 12, 5, 3, 2, 0, 13, 6, 3, 8, 0, 1,
-               4, 7, 5, 6, 11, 5, 0, 4, 9, 4, 7, 1, 6, 1, 10, 3, 5, 8, 0, 1, 3, 12, 3, 10, 5, 3, 2, 0,
-               9, 5, 12, 2, 7, 2, 4, 9, 0, 13]
 
 
 class Trainer:
@@ -39,32 +33,72 @@ class Trainer:
             while not done:
                 for t in range(self.mini_batch_size):
                     prob = self.model.pi(torch.from_numpy(state).float())
-                    prob = prob * torch.from_numpy(1 - self.env.infeasible).float()
+                    available_hands = self.env.return_available_hand()
+                    available = np.concatenate([available_hands, np.zeros(14)])
+                    prob = prob * torch.from_numpy(available).float()
                     prob = F.normalize(prob, dim=1, p=1.0)
-                    categorical_distribution = Categorical(prob)
 
+                    categorical_distribution = Categorical(prob)
+                    # select hand
+                    hand = categorical_distribution.sample().item()
+                    prev_state = copy.deepcopy(state)
+                    self.env.state.goods = hand
+                    state = self.env.state.state_to_numpy()
+                    # print(prob)
+
+                    self.model.put_data(
+                        (
+                            copy.deepcopy(prev_state),
+                            hand,
+                            float(self.env.reward / 128),
+                            copy.deepcopy(state),
+                            prob[0][hand].item(),
+                            done,
+                        )
+                    )
+
+                    prob2 = self.model.pi(torch.from_numpy(state).float())
+                    available_actions = self.env.return_available_action(hand)
+                    # select action
+
+                    # error handling
+                    if not np.any(available_actions):
+                        self.env.done = True
+                        done = True
+                        break
+
+                    available = np.concatenate([np.zeros(27), available_actions])
+                    prob2 = prob2 * torch.from_numpy(available).float()
+                    prob2 = F.normalize(prob2, dim=1, p=1.0)
+                    categorical_distribution = Categorical(prob2)
                     action = categorical_distribution.sample().item()
-                    new_state, reward, done = self.env.step(action)
+
+                    new_state, reward, done = self.env.step(hand, action - 27)
                     new_state = new_state.state_to_numpy()
-                    # print(action, reward)
+
                     # for goods in self.env.state.hand:
                     #     if self.env.state.hand[goods] != 0:
                     #         print(f"{goods}: {self.env.state.hand[goods]}")
+
+                    # print(f"num_done : {self.env.num_solved}, step : {self.env.num_steps}\n")
+
                     self.model.put_data(
                         (
                             copy.deepcopy(state),
                             action,
                             float(reward / 128),
                             copy.deepcopy(new_state),
-                            prob[0][action].item(),
+                            prob2[0][action].item(),
                             done,
                         )
                     )
                     state = copy.deepcopy(new_state)
-                    if done:
-                        rewards.append(reward)
-                        break
                 self.model.train_net()
+
+                if done:
+                    rewards.append(reward)
+                    break
+
             # except Exception as e:
             #     logger.info(f"episode : {episode}, reward : {reward}")
             #     logger.error(e)
@@ -74,10 +108,11 @@ class Trainer:
             episode += 1
 
             if episode % PRINT_INTERVAL == 0 and episode != 0:
-                print("Episode :{}, avg reward : {:.2f}".format(episode, np.mean(rewards)))
+                print("Episode :{}, avg reward : {:.2f}, max reward : {:.2f}".format(
+                    episode, np.mean(rewards), max(rewards)))
                 rewards = []
         torch.save(self.model.state_dict(), f"hr_ppo_demo_{episode}.pt")
 
     def _init_hyperparameters(self):
-        self.max_episodes = 5000
-        self.mini_batch_size = 25
+        self.max_episodes = 50000
+        self.mini_batch_size = 100

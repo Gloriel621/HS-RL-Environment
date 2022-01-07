@@ -10,16 +10,17 @@ class PPO(nn.Module):
         self.init_hyperparameters()
 
         self.data = []
-        self.num_inputs = 62
+        self.num_inputs = 63
+        self.num_goods = 27
         self.num_actions = 14
 
         self.fc1 = nn.Linear(self.num_inputs, 512)
         self.fc2 = nn.Linear(512, 256)
-        self.fc_pi = nn.Linear(256, self.num_actions)
+        self.fc_pi = nn.Linear(256, self.num_goods + self.num_actions)
         self.fc_v = nn.Linear(256, 1)
         self.optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
 
-    def pi(self, x, softmax_dim=1):
+    def pi(self, x: torch.Tensor, softmax_dim=1):
 
         x = x.reshape(-1, self.num_inputs)
         x = F.elu(self.fc1(x))
@@ -28,7 +29,8 @@ class PPO(nn.Module):
         prob = F.softmax(x, dim=softmax_dim)
         return prob
 
-    def v(self, x):
+    def v(self, x: torch.Tensor):
+
         x = x.reshape(-1, self.num_inputs)
         x = F.elu(self.fc1(x))
         x = F.elu(self.fc2(x))
@@ -75,6 +77,8 @@ class PPO(nn.Module):
     def train_net(self):
         state, action, reward, state_prime, done_mask, prob_action = self.make_batch()
 
+        # print(state, action, reward, state_prime, done_mask, prob_action)
+
         for i in range(self.K_epoch):
 
             td_target = reward + self.gamma * self.v(state_prime) * done_mask
@@ -102,10 +106,11 @@ class PPO(nn.Module):
             self.optimizer.zero_grad()
             loss.mean().backward()
             self.optimizer.step()
+            # print("train")
 
     def init_hyperparameters(self):
         self.gamma = 0.99
-        self.lmbda = 0.99
+        self.lmbda = 0.95
         self.K_epoch = 1
         self.eps_clip = 0.15
-        self.learning_rate = 0.0002
+        self.learning_rate = 0.0001

@@ -38,6 +38,8 @@ class Environment:
                 self.state.hand[target] += num_second
                 self.state.hand[goods_str] -= num_second * amount
 
+        self.reward += 1
+
     # actions 7 ~ 13
     def Buy(self, goods: int, action: int):
 
@@ -56,13 +58,17 @@ class Environment:
         # return indices of available actions
         hand = self.state.hand_to_numpy()
 
-        return np.where(hand > 0)[0]
+        available_hand = hand
+        available_hand[available_hand > 0] = 1
+
+        return available_hand
 
     def return_available_action(self, goods_int):
         # 손패에 있는 교환하기로 한 물건에 대하여 갈 수 있는 action의 목록을 뽑아준다.
         # input goods는 int 형태
 
-        available_action_list = []
+        available_action_list = np.zeros(14)
+        goods_str = list(self.state.hand.items())[goods_int][0]
 
         for action in range(7):  # sellers
             goods_list = Sellers[action]
@@ -71,11 +77,9 @@ class Environment:
                 first = goods[0]
                 amount = goods[2]
 
-                if self.state.hand[first] >= amount:
-                    available_action_list.append(action)
+                if goods_str == first and self.state.hand[first] >= amount:
+                    available_action_list[action] = 1
                     break
-
-        goods_str = list(self.state.hand.items())[goods_int][0]
 
         for action in range(7):  # buyers
             buyer = self.state.buyers[action]
@@ -83,7 +87,7 @@ class Environment:
 
             if (goods_str in buyer_goods_list) and buyer[goods_str] > 0 \
                     and self.state.hand[goods_str] >= buyer[goods_str]:
-                available_action_list.append(action + 7)
+                available_action_list[action + 7] = 1
 
         return available_action_list
 
@@ -97,17 +101,11 @@ class Environment:
         else:
             self.Sell(goods, action)
 
-        #
-        if (prev_state.hand == self.state.hand
+        if not (prev_state.hand == self.state.hand
                 and prev_state.buyers == self.state.buyers):
-            self.infeasible[action] = 1
-
-        else:
-            self.infeasible = np.zeros(self.num_actions)
             self.num_steps += 1
-        # 여기 지워야 함
 
-        if np.all(self.infeasible) or self.num_solved >= 35 or self.num_steps >= 250:
+        if self.num_solved >= 35 or self.num_steps >= 500:
             self.done = True
 
         return self.state, self.reward, self.done

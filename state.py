@@ -7,13 +7,15 @@ class State:
     def __init__(self):
         self.hand = Hand
         self.buyers = Buyers
+        self.goods = 100
 
         self.state_to_numpy()
 
     def state_to_numpy(self):  # change to model input form
         np_hand = self.hand_to_numpy()
         np_buyers = self.buyers_to_numpy()
-        state = np.concatenate([np_hand, np_buyers])
+        np_goods = np.array([self.goods])
+        state = np.concatenate([np_hand, np_buyers, np_goods])
 
         return state
 

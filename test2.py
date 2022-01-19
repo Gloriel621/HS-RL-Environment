@@ -1,7 +1,7 @@
 from environment import Environment
 
 
-goods_action_list = [(0, 5), (6, 1), (0, 1), (16, 3), (16, 3)]
+goods_action_list = [(0, 5), (0, 1), (6, 3), (2, 0), (12, 10), (0, 5), (0, 1), (6, 3), (2, 9), (0, 5)]
 
 env = Environment()
 env.reset()

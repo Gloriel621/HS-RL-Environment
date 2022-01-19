@@ -110,7 +110,7 @@ class PPO(nn.Module):
 
     def init_hyperparameters(self):
         self.gamma = 0.99
-        self.lmbda = 0.95
+        self.lmbda = 0.99
         self.K_epoch = 1
-        self.eps_clip = 0.15
-        self.learning_rate = 0.0001
+        self.eps_clip = 0.5
+        self.learning_rate = 0.0005

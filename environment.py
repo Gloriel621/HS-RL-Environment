@@ -38,7 +38,6 @@ class Environment:
                 self.state.hand[target] += num_second
                 self.state.hand[goods_str] -= num_second * amount
 
-        self.reward += 1
 
     # actions 7 ~ 13
     def Buy(self, goods: int, action: int):

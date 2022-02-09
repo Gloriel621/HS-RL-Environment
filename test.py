@@ -1,12 +1,4 @@
 # https://www.hearthpwn.com/news/8230-mysteries-of-the-phoenix-druid-and-hunter-puzzles
-from environment import Environment
-from model import PPO
-import copy
-import numpy as np
-import torch
-import torch.nn.functional as F
-from torch.distributions import Categorical
-
 # Baloon_Merchant 0
 # Armor_Vender 1
 # Barrens_Blacksmith 2
